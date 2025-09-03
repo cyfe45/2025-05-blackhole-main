@@ -73,7 +73,7 @@ contract GenesisPoolManager is IGenesisPoolBase, IGenesisPoolManager, OwnableUpg
 
         epochController = _epochController;
         router = _router;
-        permissionRegistory = _permissionRegistory;
+        permissionRegistory = _permissionRegistory;//@audit-issue misspelling of the variable name
         gaugeManager = IGaugeManager(_gaugeManager);
         pairFactory = IBaseV1Factory(_pairFactory);
         genesisFactory = IGenesisPoolFactory(_genesisFactory);

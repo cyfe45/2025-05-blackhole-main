@@ -69,7 +69,7 @@ contract Bribe is ReentrancyGuard {
         ve = IVoter(_voter)._ve();
         minter = IGaugeManager(_gaugeManager).minter();
         avm = IVotingEscrow(ve).avm();
-        require(minter != address(0), "ZA");
+        require(minter != address(0), "ZA"); //@audit-issue should be on line 64 instead
         owner = _owner;
         TYPE = _type;
 
@@ -280,6 +280,7 @@ contract Bribe is ReentrancyGuard {
             uint256 _reward = earned(tokenId, tokens[i]);
             lastEarn[tokens[i]][tokenId] = block.timestamp;
             if (_reward > 0) {
+
                 IERC20(tokens[i]).safeTransfer(_owner, _reward);
             }
         }
@@ -347,7 +348,7 @@ contract Bribe is ReentrancyGuard {
     }
 
     /// @notice Set a new Owner
-    event SetOwner(address indexed _owner);
+    event SetOwner(address indexed _owner); //@audit-issue odd place for an event
     function setOwner(address _owner) external onlyAllowed {
         require(_owner != address(0), "ZA");
         owner = _owner;
@@ -358,13 +359,13 @@ contract Bribe is ReentrancyGuard {
 
     /* ========== MODIFIERS ========== */
 
-    modifier onlyAllowed() {
+    modifier onlyAllowed() { //@audit-issue odd place for a modifier
         require( (msg.sender == owner || msg.sender == bribeFactory), "NA" );
         _;
     }
 
 
-    /* ========== EVENTS ========== */
+    /* ========== EVENTS ========== */ //@audit-issue odd place for events
 
     event RewardAdded(address indexed rewardToken, uint256 reward, uint256 startTimestamp);
     event Staked(uint256 indexed tokenId, uint256 amount);

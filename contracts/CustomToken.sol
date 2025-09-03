@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.0; //@audit-issue should this be 0.8.13?
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -29,7 +29,7 @@ contract CustomToken is ERC20, Ownable {
      * @param amount Amount of tokens to be minted.
      */
     function mint(address account, uint256 amount) external onlyOwner {
-        _mint(account, amount);
+        _mint(account, amount);//@audit-issue does this function provide a return value and should it be checked?
     }
 
     /**
@@ -38,6 +38,6 @@ contract CustomToken is ERC20, Ownable {
      * @param amount Amount of tokens to be burned.
      */
     function burn(address account, uint256 amount) external onlyOwner {
-        _burn(account, amount);
+        _burn(account, amount);//@audit-issue does this function provide a return value and should it be checked?
     }
 }

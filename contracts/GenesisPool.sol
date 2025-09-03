@@ -2,7 +2,7 @@
 pragma solidity 0.8.13;
 
 import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";
+import "@openzeppelin/contracts-upgradeable/security/ReentrancyGuardUpgradeable.sol";//@audit-issue not used
 import {BlackTimeLibrary} from "./libraries/BlackTimeLibrary.sol";
 
 import "./interfaces/IGenesisPool.sol";
@@ -320,7 +320,7 @@ contract GenesisPool is IGenesisPool, IGenesisPoolBase {
         }
     }
 
-    function balanceOf(address account) external view returns (uint256) {
+    function balanceOf(address account) external view returns (uint256) {//@audit-issue why separate function rather than using balanceOf directly?
         uint256 _depositerLiquidity = liquidity / 2;
         uint256 balance = (_depositerLiquidity * userDeposits[account]) / totalDeposits;
         if(account == genesisInfo.tokenOwner) balance += (liquidity - _depositerLiquidity - tokenOwnerUnstaked);

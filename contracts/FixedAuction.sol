@@ -34,7 +34,7 @@ contract FixedAuction is IGenesisPoolBase, IAuction, OwnableUpgradeable {
     }
 
     // populate
-    function purchased(uint256 amount) external {
+    function purchased(uint256 amount) external {//@audit-issue low issue but the function is missing any code and clearly states in the comment `populate`
 
     }
 }

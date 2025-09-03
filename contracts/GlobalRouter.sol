@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.13;
 
-import "@openzeppelin/contracts/utils/math/SafeMath.sol";
-import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
-import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/utils/math/SafeMath.sol";//@audit-issue unused!!
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";//@audit-issue unused!!
+import "@openzeppelin/contracts/access/Ownable.sol";//@audit-issue unused!!
+import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";//@audit-issue unused!!
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";//@audit-issue unused!!
 
 interface ITradeHelper {
     struct Route {
@@ -23,7 +23,7 @@ interface ITradeHelper {
 }
 
 
-interface IBaseV1Factory {
+interface IBaseV1Factory {//@audit-issue interface not used anywhere in the code
     function allPairsLength() external view returns (uint);
     function isPair(address pair) external view returns (bool);
     function pairCodeHash() external view returns (bytes32);
@@ -51,13 +51,13 @@ interface erc20 {
     function approve(address spender, uint value) external returns (bool);
 }
 
-interface IPairFactory {
+interface IPairFactory {//@audit-issue interface not used anywhere in the code
     function getFee(bool _stable) external view returns(uint256);
     function MAX_REFERRAL_FEE() external view returns(uint256);
 }
 
 
-library Math {
+library Math {//@audit-issue why define a library instead of using the built-in SafeMath functions? Also this library is not used anywhere in the code.
     function min(uint a, uint b) internal pure returns (uint) {
         return a < b ? a : b;
     }
@@ -78,7 +78,7 @@ library Math {
     }
 }
 
-interface IWETH {
+interface IWETH {//@audit-issue interface not used anywhere in the code
     function deposit() external payable;
     function transfer(address to, uint value) external returns (bool);
     function withdraw(uint) external;
@@ -192,7 +192,7 @@ contract GlobalRouter {
     /// @param  _type       boolean true := sAMM/vAMM pools, false := algebra v3 
     function swapExactTokensForTokens(uint amountIn,uint amountOutMin, ITradeHelper.Route[] calldata routes,address to,uint deadline, bool _type) external ensure(deadline) returns (uint[] memory amounts){
         
-        amounts = tradeHelper.getAmountsOut(amountIn, routes);
+        amounts = tradeHelper.getAmountsOut(amountIn, routes);//@audit-issue could potentially be used to figure out the amount of tokens before the swap. Also no check on the msg.sender address being 0x0.
         require(amounts[amounts.length - 1] >= amountOutMin, 'BaseV1Router: INSUFFICIENT_OUTPUT_AMOUNT');
         address _pair = tradeHelper.pairFor(routes[0].from, routes[0].to, routes[0].stable);
         _safeTransferFrom( routes[0].from, msg.sender, _pair, amounts[0] );
@@ -201,7 +201,7 @@ contract GlobalRouter {
     }
 
 
-    function exactInput(IRouterV3.ExactInputParams memory params)
+    function exactInput(IRouterV3.ExactInputParams memory params)//@audit-issue commented out code in function leaving with no code
         external
         payable
         /*checkDeadline(params.deadline)*/
@@ -280,19 +280,19 @@ contract GlobalRouter {
     function _safeTransferFrom(address token, address from, address to, uint256 value) internal {
         require(token.code.length > 0);
         (bool success, bytes memory data) =
-        token.call(abi.encodeWithSelector(erc20.transferFrom.selector, from, to, value));
+        token.call(abi.encodeWithSelector(erc20.transferFrom.selector, from, to, value));//audit-issue they are using call function to transfer tokens. This is not safe. It is recommended to use transferFrom function instead. Also is there reentrancy risk? Also avoid the use encodeWithSelector function and use abi.encodeCall which keeps the function signature and arguments in the same order.
         require(success && (data.length == 0 || abi.decode(data, (bool))));
     }
     
     function _safeTransferETH(address to, uint value) internal {
-        (bool success,) = to.call{value:value}(new bytes(0));
+        (bool success,) = to.call{value:value}(new bytes(0));//@audit-issue they are using call function to transfer tokens. This is not safe. It is recommended to use transferFrom function instead. Also is there reentrancy risk? Also avoid the use encodeWithSelector function and use abi.encodeCall which keeps the function signature and arguments in the same order.
         require(success, 'TransferHelper: ETH_TRANSFER_FAILED');
     }
 
     function _safeTransfer(address token, address to, uint256 value) internal {
         require(token.code.length > 0);
         (bool success, bytes memory data) =
-        token.call(abi.encodeWithSelector(erc20.transfer.selector, to, value));
+        token.call(abi.encodeWithSelector(erc20.transfer.selector, to, value));//@audit-issue they are using call function to transfer tokens. This is not safe. It is recommended to use transferFrom function instead. Also is there reentrancy risk? Also avoid the use encodeWithSelector function and use abi.encodeCall which keeps the function signature and arguments in the same order.
         require(success && (data.length == 0 || abi.decode(data, (bool))));
     }
 

@@ -36,7 +36,7 @@ contract CustomPoolDeployer is Ownable {
         _;
     }
 
-    constructor(
+    constructor(//@audit-issue if there is a proxy used should this constructor be used as is?
         address _entryPoint,
         address _plugin,
         int24 _tickSpacing,

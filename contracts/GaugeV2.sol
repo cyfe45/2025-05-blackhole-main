@@ -174,7 +174,7 @@ contract GaugeV2 is ReentrancyGuard, Ownable {
         return _balanceOf(account);
     }
 
-    function _balanceOf(address account) internal view returns (uint256) {
+    function _balanceOf(address account) internal view returns (uint256) {//@audit-issue why separate function rather than using balanceOf directly?
         uint256 balance = _balances[account];
         if(genesisPool != address(0)) balance += IGenesisPool(genesisPool).balanceOf(account);
         return balance;

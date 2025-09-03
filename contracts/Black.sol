@@ -21,7 +21,7 @@ contract Black is IBlack {
 
     constructor() {
         minter = msg.sender;
-        _mint(msg.sender, 0);
+        _mint(msg.sender, 0); @audit-issue unchecked return value?
     }
 
     // No checks as its meant to be once off to set minting rights to BaseV1 Minter

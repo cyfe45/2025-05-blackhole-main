@@ -17,7 +17,7 @@ import './interfaces/IBribeFactory.sol';
 import './interfaces/IGauge.sol';
 import './interfaces/IMinter.sol';
 import './interfaces/IGaugeCL.sol';
-import './interfaces/IBribe.sol';
+import './interfaces/IBribe.sol';//@audit-issue second import of the same interface 
 import './interfaces/IGaugeFactory.sol';
 import {VoterFactoryLib} from "./libraries/VoterFactoryLib.sol";
 import {BlackTimeLibrary} from "./libraries/BlackTimeLibrary.sol";
@@ -78,13 +78,13 @@ contract GaugeManager is OwnableUpgradeable, ReentrancyGuardUpgradeable {
     constructor() {}
 
     function initialize(address __ve, address _tokenHandler, address _gaugeFactory, address _gaugeFactoryCL, 
-                        address _pairFactory, address _pairFactoryCL, address _permissionRegistory) initializer public {
+                        address _pairFactory, address _pairFactoryCL, address _permissionRegistory) initializer public {//@audit-issue misspelling of the variable name
      __Ownable_init();
      __ReentrancyGuard_init();
       _ve = __ve;  
       base = IVotingEscrow(__ve).token();  
       tokenHandler = _tokenHandler;
-       permissionRegistry = _permissionRegistory;
+       permissionRegistry = _permissionRegistory;//@audit-issue misspelling of the variable name
       _factoriesData.gaugeFactories.push(_gaugeFactory);
       _factoriesData.gaugeFactories.push(_gaugeFactoryCL);
       _factoriesData.pairFactories.push(_pairFactory);
